@@ -4,15 +4,28 @@
 
 
 #include <iostream>
+#include <Windows.h>
+#include "BMPFormat.hpp"
 
 
 
 namespace BMPDisplay
 {
-	class BitmapDispaly
+	class BitmapDisplay
 	{
 	public:
-		void displayBMP();
+		BitmapDisplay(const BMPFormat::Bitmap &struct_object)
+		{
+			HWND consoleWindow = GetConsoleWindow();
+			if (consoleWindow != NULL)
+			{
+				ShowWindow(consoleWindow, SW_MAXIMIZE);
+			}
+		}
+
+		void displayBMP(const BMPFormat::Bitmap &struct_object) const;
+
+		void display_BMP_Information(const BMPFormat::Bitmap &struct_object) const;
 	private:
 	};
 };
