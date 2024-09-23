@@ -5,7 +5,7 @@
 
 int main (int argc, char *argv[])
 {	
-	BMPReader::BitmapReader input_file("test_case_1.bmp");
+	BMPReader::BitmapReader input_file("TEST_CASE_1.bmp");
 	input_file.openBMP();
 
 	BMPFormat::Bitmap bitmap_struct;

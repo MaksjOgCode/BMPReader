@@ -22,7 +22,7 @@ namespace BMPFormat
 #pragma pack(pop)	
 
 #pragma pack(push, 1)
-	struct CIEXYZTRIPLE : private CIEXYZ
+	struct CIEXYZTRIPLE
 	{
 	public:
 		CIEXYZ ciexyzRed;
@@ -158,7 +158,8 @@ namespace BMPFormat
 		static inline const std::vector <unsigned int> getSizeofTypesV5Header();
 	};
 #pragma pack(pop)
-	inline const unsigned int BMPFormat::Bitmap_V5_Header::getSizeofV5Header() { return sizeof(BMPFormat::Bitmap_V5_Header); }
+	inline const unsigned int BMPFormat::Bitmap_V5_Header::getSizeofV5Header() {return sizeof(BMPFormat::Bitmap_V5_Header); }
+
 	/* We return the byte order of this structure: */
 	inline const std::vector <unsigned int> BMPFormat::Bitmap_V5_Header::getSizeofTypesV5Header() { return {4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 36, 4, 4, 4, 4, 4, 4, 4 }; }
 //------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -176,7 +177,8 @@ namespace BMPFormat
 	public:
 		Bitmap_File_Header	bmp_file_header;
 		Bitmap_DIB_Header		bmp_dib_header;
-
+	public:
+		std::vector < std::vector <unsigned long> > data_pixel {};
 	public:
 		inline void setVersion(uint8_t _flag_version_dib);
 		inline uint8_t getVersion() const;

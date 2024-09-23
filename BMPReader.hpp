@@ -101,12 +101,20 @@ namespace BMPReader
 
       std::vector <BMPReader::H_BRAA::Bytes>  data_from_bmp_file  {};    /* Vector that contains the read data from the file:  */
    private:
+      std::vector <BMPReader::H_BRAA::Bytes>  pixel_data  {};    /* Vector that contains the read data from the file:  */
+   private:
       std::vector <BMPReader::H_BRAA::Bytes>  readBMP_FILE_Header();
       std::vector <BMPReader::H_BRAA::Bytes>  readBMP_DIB_Header();
-      std::vector <BMPReader::H_BRAA::Bytes>  readBMP_PIXEL_DATA(BMPFormat::Bitmap &struct_object);
 
       std::vector <BMPReader::H_BRAA::Bytes>  readBMPFile();
+   private:
+      std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage(BMPFormat::Bitmap &struct_object);
 
+        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_8bf (BMPFormat::Bitmap &struct_object);
+        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_16bf(BMPFormat::Bitmap &struct_object);
+        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_24bf(BMPFormat::Bitmap &struct_object);
+        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_32bf(BMPFormat::Bitmap &struct_object);
+   private:
       BMPFormat::Bitmap& fill_FILE_header (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
 
       BMPFormat::Bitmap& fill_DIB_header        (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
@@ -125,6 +133,10 @@ namespace BMPReader
    public:
       const bool  openBMP();     /* Open  .bmp File:                                   */
       const bool  closeBMP();    /* Close .bmp File !DESTRUCTOR CALL THIS METHOD!:     */
+
+      std::vector < std::vector <unsigned long> > GETTER_PIXEL_DATA1 (std::vector <BMPReader::H_BRAA::Bytes> pixel_data);
+
+      std::vector < std::vector <unsigned long> > GETTER_PIXEL_DATA2(std::vector < std::vector <unsigned long> > temp_vector);
 
    public:
       BMPFormat::Bitmap& readAndFillBitmapStruct(BMPFormat::Bitmap &struct_object);

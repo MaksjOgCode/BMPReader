@@ -113,18 +113,151 @@ std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::readBMPFile()
    return data_from_bmp_file;
 }
 //--------------------------------------------------------------------------------------------------------------
-std::vector <BMPReader::H_BRAA::Bytes>  BMPReader::BitmapReader::readBMP_PIXEL_DATA(BMPFormat::Bitmap &struct_object)
-{
-   return data_from_bmp_file;
-}
-//--------------------------------------------------------------------------------------------------------------
 BMPFormat::Bitmap& BMPReader::BitmapReader::readAndFillBitmapStruct(BMPFormat::Bitmap &struct_object)
 {
    data_from_bmp_file = readBMPFile();
 
    BMPReader::BitmapReader::fillBitmapStruct(struct_object, data_from_bmp_file);
 
+   pixel_data = BMPReader::BitmapReader::getPixelDataImage(struct_object);
+
    return struct_object;
+}
+//--------------------------------------------------------------------------------------------------------------
+std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::getPixelDataImage(BMPFormat::Bitmap &struct_object)
+{
+   unsigned long long bmp_dib_type = BMPReader::H_BRAA::getResultValueFromFile(data_from_bmp_file[5]);
+   if ( !data_from_bmp_file.empty() )
+   {
+      if ( bmp_dib_type != H_BITMAPCOREHEADER && bmp_dib_type != H_BITMAPINFOHEADER && bmp_dib_type != H_BITMAPV4HEADER && bmp_dib_type != H_BITMAPV5HEADER )
+         return pixel_data;
+   }
+
+   uint16_t bit_count {};
+
+   switch (bmp_dib_type)
+   {
+   case H_BITMAPCOREHEADER:
+   {
+      bit_count = struct_object.bmp_dib_header.bmp_core_header.bcBitCount;
+
+      switch (bit_count)
+      {
+      case 8:
+         getPixelDataImage_8bf(struct_object);
+         break;
+
+      case 16:
+          getPixelDataImage_16bf(struct_object);
+         break;
+
+      case 24:
+          getPixelDataImage_24bf(struct_object);
+         break;
+
+      case 32:
+          getPixelDataImage_32bf(struct_object);
+         break;
+
+      default:
+         return pixel_data;
+         break;
+      }
+   break;
+   }
+
+   case H_BITMAPINFOHEADER:
+   {
+
+      bit_count = struct_object.bmp_dib_header.bmp_info_header.biBitCount;
+
+      switch (bit_count)
+      {
+      case 8:
+          getPixelDataImage_8bf(struct_object);
+         break;
+
+      case 16:
+          getPixelDataImage_16bf(struct_object);
+         break;
+
+      case 24:
+          getPixelDataImage_24bf(struct_object);
+         break;
+
+      case 32:
+          getPixelDataImage_32bf(struct_object);
+         break;
+
+      default:
+         return pixel_data;
+         break;
+      }
+   break;
+   }
+
+   case H_BITMAPV4HEADER:
+   {
+      bit_count = struct_object.bmp_dib_header.bmp_v4_header.bV4BitCount;
+      switch (bit_count)
+      {
+      case 8:
+          getPixelDataImage_8bf(struct_object);
+         break;
+
+      case 16:
+          getPixelDataImage_16bf(struct_object);
+         break;
+
+      case 24:
+          getPixelDataImage_24bf(struct_object);
+         break;
+
+      case 32:
+          getPixelDataImage_32bf(struct_object);
+         break;
+
+      default:
+         return pixel_data;
+         break;
+      }
+   break;
+   }
+
+   case H_BITMAPV5HEADER:
+   {
+      bit_count = struct_object.bmp_dib_header.bmp_v5_header.bV5BitCount;
+      switch (bit_count)
+      {
+      case 8:
+          getPixelDataImage_8bf(struct_object);
+         break;
+
+      case 16:
+          getPixelDataImage_16bf(struct_object);
+         break;
+
+      case 24:
+          getPixelDataImage_24bf(struct_object);
+         break;
+
+      case 32:
+          getPixelDataImage_32bf(struct_object);
+         break;
+
+      default:
+         return pixel_data;
+         break;
+      }
+   break;
+   }
+
+   default:
+      return pixel_data;
+      break;
+   }
+
+   return pixel_data;
 }
 //--------------------------------------------------------------------------------------------------------------
 BMPFormat::Bitmap& BMPReader::BitmapReader::fill_FILE_header(BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file)
@@ -408,3 +541,205 @@ inline void BMPReader::H_BRAA::ConvertToBitmapData (BMPReader::H_BRAA::HelperRef
    }
 }
 //--------------------------------------------------------------------------------------------------------------
+std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::getPixelDataImage_8bf (BMPFormat::Bitmap &struct_object)
+{
+   bmp_file.seekg( struct_object.bmp_file_header.bf_off_bits, std::ios::beg );
+
+   uint64_t temp_pixel_data_size {};
+   std::vector <unsigned char> temp_pixel_data {};
+   switch( struct_object.getVersion() )
+   {
+   case H_VERSION_DIB_CORE_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_core_header.bcWidth * struct_object.bmp_dib_header.bmp_core_header.bcHeight;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_INFO_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_info_header.biWidth * struct_object.bmp_dib_header.bmp_info_header.biHeight;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V4_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v4_header.bV4Width * struct_object.bmp_dib_header.bmp_v4_header.bV4Height;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V5_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v5_header.bV5Width * struct_object.bmp_dib_header.bmp_v5_header.bV5Height;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   default:
+      return pixel_data;
+      break;
+   }
+
+   bmp_file.read ( reinterpret_cast<char*>( temp_pixel_data.data() ), temp_pixel_data_size);
+
+   //!!!!!!!!!!!!!!!!!!!! ƒŒƒ≈À¿“‹ ◊»“¿≈“ ¬Õ» ”ƒ¿ œŒ ¡¿…“”
+
+   return pixel_data;
+}
+//--------------------------------------------------------------------------------------------------------------
+std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::getPixelDataImage_16bf(BMPFormat::Bitmap &struct_object)
+{
+   bmp_file.seekg( struct_object.bmp_file_header.bf_off_bits, std::ios::beg );
+
+   uint64_t temp_pixel_data_size {};
+   std::vector <unsigned char> temp_pixel_data {};
+   switch( struct_object.getVersion() )
+   {
+   case H_VERSION_DIB_CORE_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_core_header.bcWidth * struct_object.bmp_dib_header.bmp_core_header.bcHeight;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_INFO_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_info_header.biWidth * struct_object.bmp_dib_header.bmp_info_header.biHeight;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V4_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v4_header.bV4Width * struct_object.bmp_dib_header.bmp_v4_header.bV4Height;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V5_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v5_header.bV5Width * struct_object.bmp_dib_header.bmp_v5_header.bV5Height;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   default:
+      return pixel_data;
+      break;
+   }
+
+   bmp_file.read ( reinterpret_cast<char*>( temp_pixel_data.data() ), temp_pixel_data_size);
+
+   BMPReader::H_BRAA::Bytes temp_set_of_bytes {};
+   for (size_t i = 0; i < temp_pixel_data_size; ++i)
+   {
+      temp_set_of_bytes.set_of_bytes.push_back( temp_pixel_data[i] );
+      if ( (i + 1) % 2 == 0 )
+      {
+         pixel_data.push_back(temp_set_of_bytes);
+         temp_set_of_bytes.set_of_bytes.clear();
+      }
+   }
+
+   return pixel_data;
+}
+//--------------------------------------------------------------------------------------------------------------
+std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::getPixelDataImage_24bf(BMPFormat::Bitmap &struct_object)
+{
+   bmp_file.seekg( struct_object.bmp_file_header.bf_off_bits, std::ios::beg );
+
+   uint64_t temp_pixel_data_size {};
+   std::vector <unsigned char> temp_pixel_data {};
+   switch( struct_object.getVersion() )
+   {
+   case H_VERSION_DIB_CORE_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_core_header.bcWidth * struct_object.bmp_dib_header.bmp_core_header.bcHeight;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_INFO_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_info_header.biWidth * struct_object.bmp_dib_header.bmp_info_header.biHeight;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V4_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v4_header.bV4Width * struct_object.bmp_dib_header.bmp_v4_header.bV4Height;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V5_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v5_header.bV5Width * struct_object.bmp_dib_header.bmp_v5_header.bV5Height;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   default:
+      return pixel_data;
+      break;
+   }
+
+   bmp_file.read ( reinterpret_cast<char*>( temp_pixel_data.data() ), temp_pixel_data_size);
+
+   BMPReader::H_BRAA::Bytes temp_set_of_bytes {};
+   for (size_t i = 0; i < temp_pixel_data_size; ++i)
+   {
+      temp_set_of_bytes.set_of_bytes.push_back( temp_pixel_data[i] );
+      if ( (i + 1) % 3 == 0 )
+      {
+         pixel_data.push_back(temp_set_of_bytes);
+         temp_set_of_bytes.set_of_bytes.clear();
+      }
+   }
+
+   return pixel_data;
+}
+//--------------------------------------------------------------------------------------------------------------
+std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::getPixelDataImage_32bf(BMPFormat::Bitmap &struct_object)
+{
+   bmp_file.seekg( struct_object.bmp_file_header.bf_off_bits, std::ios::beg );
+
+   uint64_t temp_pixel_data_size {};
+   std::vector <unsigned char> temp_pixel_data {};
+   switch( struct_object.getVersion() )
+   {
+   case H_VERSION_DIB_CORE_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_core_header.bcWidth * struct_object.bmp_dib_header.bmp_core_header.bcHeight * 4;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_INFO_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_info_header.biWidth * struct_object.bmp_dib_header.bmp_info_header.biHeight * 4;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V4_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v4_header.bV4Width * struct_object.bmp_dib_header.bmp_v4_header.bV4Height * 4;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   case H_VERSION_DIB_V5_HEADER:
+      temp_pixel_data_size = struct_object.bmp_dib_header.bmp_v5_header.bV5Width * struct_object.bmp_dib_header.bmp_v5_header.bV5Height * 4;
+      temp_pixel_data.resize(temp_pixel_data_size);
+      break;
+
+   default:
+      return pixel_data;
+      break;
+   }
+
+   bmp_file.read ( reinterpret_cast<char*>( temp_pixel_data.data() ), temp_pixel_data_size);
+
+   BMPReader::H_BRAA::Bytes temp_set_of_bytes {};
+   for (size_t i = 0; i < temp_pixel_data_size; ++i)
+   {
+      temp_set_of_bytes.set_of_bytes.push_back( temp_pixel_data[i] );
+      if ( (i + 1) % 4 == 0 )
+      {
+         pixel_data.push_back(temp_set_of_bytes);
+         temp_set_of_bytes.set_of_bytes.clear();
+      }
+   }
+
+   struct_object.data_pixel = GETTER_PIXEL_DATA1(pixel_data);
+
+   return pixel_data;
+}
+//--------------------------------------------------------------------------------------------------------------
+
+std::vector < std::vector <unsigned long> > BMPReader::BitmapReader::GETTER_PIXEL_DATA1 (std::vector <BMPReader::H_BRAA::Bytes> pixel_data)
+{
+   std::vector < std::vector <unsigned long> > temp_vector{};
+
+   BMPReader::H_BRAA::Bytes temp_set_of_bytes {};
+   for (size_t i = 0; i < pixel_data.size(); ++i)
+   { 
+      temp_vector.push_back(pixel_data[i].set_of_bytes);
+   }
+
+   return temp_vector;
+}

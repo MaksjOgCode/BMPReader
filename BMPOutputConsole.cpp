@@ -8,8 +8,70 @@ void SetConsoleColor(WORD attributes)
 	SetConsoleTextAttribute(hConsole, attributes);
 }
 
+
 void BMPDisplay::BitmapDisplay::displayBMP(const BMPFormat::Bitmap &struct_object) const
 {
+	uint64_t Width{};
+	uint64_t Height{};
+	switch( struct_object.getVersion() )
+	{
+	case H_VERSION_DIB_CORE_HEADER:
+		Width = struct_object.bmp_dib_header.bmp_core_header.bcWidth;
+		Height = struct_object.bmp_dib_header.bmp_core_header.bcHeight;
+		break;
+
+	case H_VERSION_DIB_INFO_HEADER:
+		Width = struct_object.bmp_dib_header.bmp_info_header.biWidth;
+		Height = struct_object.bmp_dib_header.bmp_info_header.biHeight;
+		break;
+
+	case H_VERSION_DIB_V4_HEADER:
+		Width = struct_object.bmp_dib_header.bmp_v4_header.bV4Width;
+		Height = struct_object.bmp_dib_header.bmp_v4_header.bV4Height;
+		break;
+
+	case H_VERSION_DIB_V5_HEADER:
+		Width = struct_object.bmp_dib_header.bmp_v5_header.bV5Width;
+		Height = struct_object.bmp_dib_header.bmp_v5_header.bV5Height;
+		break;
+
+	default:
+		return;
+		break;
+	}
+
+	H_SWITCH_RED
+	std::vector < std::vector <unsigned long> > data_pixel {};
+
+	data_pixel = struct_object.data_pixel;
+
+	for (size_t i = 0, index = 8191, current_cursor = 8192 - Width; i < Height; ++i)
+	{
+		for (size_t j = 0; j < Width; ++j, --index, ++current_cursor)
+		{	
+			if (i != 0 && current_cursor % Width == 0)
+			{
+				if (current_cursor != 0)
+					current_cursor -= Width + Width;
+			}
+			if (current_cursor >= 8192 && current_cursor <= 0)
+				break;
+
+
+			std::cout << "\033[38;2;" << data_pixel[current_cursor][2] << ";" << data_pixel[current_cursor][1] << ";" << data_pixel[current_cursor][0] << "mO\033[0m";
+		}
+		std::cout << "\n";
+	}
+
+	//for (size_t i = 0; i < 250; i += 50)
+	//{
+	//std::cout << "\033[38;2;" << i << ";0;0mТекст красного цвета\033[0m" << std::endl;
+	//}
+
+
+	//std::cout << "\033[38;2;0;255;0mТекст зеленого цвета\033[0m" << std::endl;
+	//std::cout << "\033[38;2;0;0;255mТекст синего цвета\033[0m" << std::endl;
+
 	display_BMP_Information(struct_object);
 }
 

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <Windows.h>
 #include "BMPFormat.hpp"
+#include "BMPReader.hpp"
 
 
 
