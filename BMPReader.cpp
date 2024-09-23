@@ -22,7 +22,7 @@ const bool BMPReader::BitmapReader::closeBMP()
 //--------------------------------------------------------------------------------------------------------------
 std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::readBMP_FILE_Header()
 {
-   BMPReader::H_BRAA::HelperRefactor_xd helper_refactor_xd( BMPFormat::Bitmap_File_Header::getSizeofFILEHeader() );
+   BMPReader::H_BRAA::HelperRefactor_xd helper_refactor_xd( BMPFormat::Bitmap_File_Header::getSizeof_FILE_Header() );
 
    if ( !bmp_file )  /* The File .bmp must be opened: */
       return helper_refactor_xd.set_of_bytes_header;
@@ -51,19 +51,19 @@ std::vector <BMPReader::H_BRAA::Bytes>  BMPReader::BitmapReader::readBMP_DIB_Hea
    switch(char_flag_version)
    {
    case H_BITMAPCOREHEADER:
-      _sizeof_CURRENT_header = BMPFormat::Bitmap_CORE_Header::getSizeofCOREHeader();
+      _sizeof_CURRENT_header = BMPFormat::Bitmap_CORE_Header::getSizeof_DIB_CORE_Header();
       break;
 
    case H_BITMAPINFOHEADER:
-      _sizeof_CURRENT_header = BMPFormat::Bitmap_INFO_Header::getSizeofINFOHeader();
+      _sizeof_CURRENT_header = BMPFormat::Bitmap_INFO_Header::getSizeof_DIB_INFO_Header();
       break;
 
    case H_BITMAPV4HEADER:
-      _sizeof_CURRENT_header = BMPFormat::Bitmap_V4_Header::getSizeofV4Header();
+      _sizeof_CURRENT_header = BMPFormat::Bitmap_V4_Header::getSizeof_DIB_V4_Header();
       break;
 
    case H_BITMAPV5HEADER:
-      _sizeof_CURRENT_header = BMPFormat::Bitmap_V5_Header::getSizeofV5Header();
+      _sizeof_CURRENT_header = BMPFormat::Bitmap_V5_Header::getSizeof_DIB_V5_Header();
       break;
 
    default:
@@ -72,7 +72,7 @@ std::vector <BMPReader::H_BRAA::Bytes>  BMPReader::BitmapReader::readBMP_DIB_Hea
 
    BMPReader::H_BRAA::HelperRefactor_xd helper_refactor_xd( _sizeof_CURRENT_header );
 
-   bmp_file.seekg( BMPFormat::Bitmap_File_Header::getSizeofFILEHeader(), std::ios::beg );
+   bmp_file.seekg( BMPFormat::Bitmap_File_Header::getSizeof_FILE_Header(), std::ios::beg );
 
    /* Reading ... bytes from .bmp file and put into bytes_buffer: */
    bmp_file.read( reinterpret_cast<char*>( helper_refactor_xd.bytes_buffer.data() ), helper_refactor_xd.sizeof_CURRENT_header );
@@ -725,7 +725,7 @@ std::vector <BMPReader::H_BRAA::Bytes> BMPReader::BitmapReader::getPixelDataImag
       }
    }
 
-   struct_object.data_pixel = GETTER_PIXEL_DATA1(pixel_data);
+   struct_object.bmp_data_pixel = GETTER_PIXEL_DATA1(pixel_data);
 
    return pixel_data;
 }

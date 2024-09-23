@@ -3,13 +3,13 @@
 
 
 
+#include "BMPFormat.hpp"
+
+
+
 #include <vector>
 #include <string>
 #include <fstream>
-
-
-#include "Hints.hpp"
-#include "BMPFormat.hpp"
 
 
 
@@ -39,23 +39,23 @@ namespace BMPReader
             switch (_sizeof_CURRENT_header)
             {
             case H_BITMAPFILEHEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_File_Header::getSizeofTypesFILEHeader();
+               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_File_Header::getSizeof_Types_FILE_Header();
                break;
 
             case H_BITMAPCOREHEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_CORE_Header::getSizeofTypesCOREHeader();
+               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_CORE_Header::getSizeof_Types_DIB_CORE_Header();
                break;
 
             case H_BITMAPINFOHEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_INFO_Header::getSizeofTypesINFOHeader();
+               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_INFO_Header::getSizeof_Types_DIB_INFO_Header();
                break;
 
             case H_BITMAPV4HEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_V4_Header::getSizeofTypesV4Header();
+               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_V4_Header::getSizeof_Types_DIB_V4_Header();
                break;
 
             case H_BITMAPV5HEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_V5_Header::getSizeofTypesV5Header();
+               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_V5_Header::getSizeof_Types_DIB_V5_Header();
                break;
 
             default:

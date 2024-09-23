@@ -33,22 +33,21 @@ namespace BMPFormat
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 #pragma pack(push, 1)
 	class Bitmap_File_Header
-	{
+	{	/* "bf" = bitmap file: */
 	public:
-		const uint16_t bf_type	= H_IS_BMP_FORMAT;		/* Signature:										*/
-				uint32_t bf_size						{};	/* File Size (in bytes):						*/
-				uint32_t bf_off_bits					{};	/* Bytes begining PixelArray:					*/
+		const uint16_t bf_type	= H_IS_BMP_FORMAT; /* Signature:                      */
+				uint32_t bf_size		{};             /* File Size (in bytes):           */
+				uint32_t bf_off_bits	{};             /* Bytes begining PixelArray:      */
 	private:			   
-		uint16_t BF_RESERVED1	=	0x0000;				/* Reserved - must contained NULL:			*/
-		uint16_t BF_RESERVED2	=	0x0000;				/* Reserved - must contained NULL:			*/
+		uint16_t BF_RESERVED1	=	0x0000;         /* Reserved - must contained NULL: */
+		uint16_t BF_RESERVED2	=	0x0000;         /* Reserved - must contained NULL: */
 	public:
-		static inline const unsigned int getSizeofFILEHeader();
-		static inline const std::vector <unsigned int> getSizeofTypesFILEHeader();
+		static inline const unsigned int getSizeof_FILE_Header ();
+		static inline const std::vector <unsigned int> getSizeof_Types_FILE_Header ();
 	};
 #pragma pack(pop)	
-	inline const unsigned int BMPFormat::Bitmap_File_Header::getSizeofFILEHeader() { return sizeof(BMPFormat::Bitmap_File_Header); }
-	/* We return the byte order of this structure: */
-	inline const std::vector <unsigned int> BMPFormat::Bitmap_File_Header::getSizeofTypesFILEHeader() { return {2, 4, 2, 2, 4}; }
+	inline const unsigned int BMPFormat::Bitmap_File_Header::getSizeof_FILE_Header() { return sizeof(BMPFormat::Bitmap_File_Header); }
+	inline const std::vector <unsigned int> BMPFormat::Bitmap_File_Header::getSizeof_Types_FILE_Header() { return {2, 4, 2, 2, 4}; }
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 #pragma pack(push, 1)
 	struct Bitmap_CORE_Header
@@ -60,13 +59,13 @@ namespace BMPFormat
 		uint16_t	bcPlanes		{};	/* In BMP, only the value 1 is allowed. This field is used in Windows icons and cursors:									*/
 		uint16_t	bcBitCount	{};	/* Number of bits per pixel:																													*/
 	public:
-		static inline const unsigned int getSizeofCOREHeader();
-		static inline const std::vector <unsigned int> getSizeofTypesCOREHeader();
+		static inline const unsigned int getSizeof_DIB_CORE_Header();
+		static inline const std::vector <unsigned int> getSizeof_Types_DIB_CORE_Header();
 	};
 #pragma pack(pop)
-	inline const unsigned int BMPFormat::Bitmap_CORE_Header::getSizeofCOREHeader() { return sizeof(BMPFormat::Bitmap_CORE_Header); }
+	inline const unsigned int BMPFormat::Bitmap_CORE_Header::getSizeof_DIB_CORE_Header() { return sizeof(BMPFormat::Bitmap_CORE_Header); }
 	/* We return the byte order of this structure: */
-	inline const std::vector <unsigned int> BMPFormat::Bitmap_CORE_Header::getSizeofTypesCOREHeader() { return {4, 2, 2, 2, 2}; }
+	inline const std::vector <unsigned int> BMPFormat::Bitmap_CORE_Header::getSizeof_Types_DIB_CORE_Header() { return {4, 2, 2, 2, 2}; }
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 #pragma pack(push, 1)
 	struct Bitmap_INFO_Header
@@ -84,13 +83,13 @@ namespace BMPFormat
 		uint32_t	biClrUsed			{};	/* The size of the color table in cells:																												*/
 		uint32_t	biClrImportant		{};	/* The number of cells from the beginning of the color table to the last one used (including itself):								*/
 	public:
-		static inline const unsigned int getSizeofINFOHeader();
-		static inline const std::vector <unsigned int> getSizeofTypesINFOHeader();
+		static inline const unsigned int getSizeof_DIB_INFO_Header();
+		static inline const std::vector <unsigned int> getSizeof_Types_DIB_INFO_Header();
 	};
 #pragma pack(pop)
-	inline const unsigned int BMPFormat::Bitmap_INFO_Header::getSizeofINFOHeader() { return sizeof(BMPFormat::Bitmap_INFO_Header); }
-	/* We return the byte order of this structure: */
-	inline const std::vector <unsigned int> BMPFormat::Bitmap_INFO_Header::getSizeofTypesINFOHeader() { return { 4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4}; }
+	inline const unsigned int BMPFormat::Bitmap_INFO_Header::getSizeof_DIB_INFO_Header() { return sizeof(BMPFormat::Bitmap_INFO_Header); }
+
+	inline const std::vector <unsigned int> BMPFormat::Bitmap_INFO_Header::getSizeof_Types_DIB_INFO_Header() { return { 4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4}; }
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 #pragma pack(push, 1)
 	struct Bitmap_V4_Header
@@ -117,13 +116,13 @@ namespace BMPFormat
 		uint32_t			bV4GammaGreen		{};	/* The value of the field is taken into account only if the Type field contains 0 (LCS_CALIBRATED_RGB). Then the gamma value for the GREEN component is indicated in the field:	*/
 		uint32_t			bV4GammaBlue		{};	/* The value of the field is taken into account only if the Type field contains 0 (LCS_CALIBRATED_RGB). Then the gamma value for the BLUE component is indicated in the field:	*/
 	public:
-		static inline const unsigned int getSizeofV4Header();
-		static inline const std::vector <unsigned int> getSizeofTypesV4Header();
+		static inline const unsigned int getSizeof_DIB_V4_Header();
+		static inline const std::vector <unsigned int> getSizeof_Types_DIB_V4_Header();
 	};
 #pragma pack(pop)
-	inline const unsigned int BMPFormat::Bitmap_V4_Header::getSizeofV4Header() { return sizeof(BMPFormat::Bitmap_V4_Header); }
-	/* We return the byte order of this structure: */
-	inline const std::vector <unsigned int> BMPFormat::Bitmap_V4_Header::getSizeofTypesV4Header() { return { 4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 36, 4, 4, 4 }; }
+	inline const unsigned int BMPFormat::Bitmap_V4_Header::getSizeof_DIB_V4_Header() { return sizeof(BMPFormat::Bitmap_V4_Header); }
+
+	inline const std::vector <unsigned int> BMPFormat::Bitmap_V4_Header::getSizeof_Types_DIB_V4_Header() { return { 4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 36, 4, 4, 4 }; }
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 #pragma pack(push, 1)
 	struct Bitmap_V5_Header
@@ -154,14 +153,13 @@ namespace BMPFormat
 		uint32_t			bV5ProfileSize		{};	/* If the color profile is directly included in the BMP, then its size in bytes is indicated here:																											*/
 		uint32_t			bV5Reserved			{};	/* Reserved and must be reset to zero:																																															*/
 	public:
-		static inline const unsigned int getSizeofV5Header();
-		static inline const std::vector <unsigned int> getSizeofTypesV5Header();
+		static inline const unsigned int getSizeof_DIB_V5_Header();
+		static inline const std::vector <unsigned int> getSizeof_Types_DIB_V5_Header();
 	};
 #pragma pack(pop)
-	inline const unsigned int BMPFormat::Bitmap_V5_Header::getSizeofV5Header() {return sizeof(BMPFormat::Bitmap_V5_Header); }
+	inline const unsigned int BMPFormat::Bitmap_V5_Header::getSizeof_DIB_V5_Header() {return sizeof(BMPFormat::Bitmap_V5_Header); }
 
-	/* We return the byte order of this structure: */
-	inline const std::vector <unsigned int> BMPFormat::Bitmap_V5_Header::getSizeofTypesV5Header() { return {4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 36, 4, 4, 4, 4, 4, 4, 4 }; }
+	inline const std::vector <unsigned int> BMPFormat::Bitmap_V5_Header::getSizeof_Types_DIB_V5_Header() { return {4, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 36, 4, 4, 4, 4, 4, 4, 4 }; }
 //------------------------------------------------------------------------------------------------------------------------------------------------------
 	struct Bitmap_DIB_Header
 	{
@@ -178,7 +176,7 @@ namespace BMPFormat
 		Bitmap_File_Header	bmp_file_header;
 		Bitmap_DIB_Header		bmp_dib_header;
 	public:
-		std::vector < std::vector <unsigned long> > data_pixel {};
+		std::vector < std::vector <unsigned long> > bmp_data_pixel {};
 	public:
 		inline void setVersion(uint8_t _flag_version_dib);
 		inline uint8_t getVersion() const;
@@ -187,9 +185,17 @@ namespace BMPFormat
 		uint8_t  flag_version_dib = 0b0000; /* 0001 - Bitmap_CORE_Header || 0010 - Bitmap_INFO_Header || 0100 - Bitmap_V4_Header || 1000 - Bitmap_V5_Header: */
 	};
 
-	inline void BMPFormat::Bitmap::setVersion(uint8_t _flag_version_dib) {
-		if (_flag_version_dib == 0b0001 || _flag_version_dib == 0b0010 || _flag_version_dib == 0b0100 || _flag_version_dib == 0b1000)
+	inline void BMPFormat::Bitmap::setVersion(uint8_t _flag_version_dib)
+	{
+		if (
+			_flag_version_dib == H_VERSION_DIB_CORE_HEADER	||
+			_flag_version_dib == H_VERSION_DIB_INFO_HEADER	||
+			_flag_version_dib == H_VERSION_DIB_V4_HEADER		||
+			_flag_version_dib == H_VERSION_DIB_V5_HEADER
+			)
+		{
 			this->flag_version_dib = _flag_version_dib;
+		}
 
 		return;
 	}

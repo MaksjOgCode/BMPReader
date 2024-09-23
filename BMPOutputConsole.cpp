@@ -43,7 +43,7 @@ void BMPDisplay::BitmapDisplay::displayBMP(const BMPFormat::Bitmap &struct_objec
 	H_SWITCH_RED
 	std::vector < std::vector <unsigned long> > data_pixel {};
 
-	data_pixel = struct_object.data_pixel;
+	data_pixel = struct_object.bmp_data_pixel;
 
 	for (size_t i = 0, index = 8191, current_cursor = 8192 - Width; i < Height; ++i)
 	{
