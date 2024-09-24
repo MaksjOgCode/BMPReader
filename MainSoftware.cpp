@@ -1,22 +1,33 @@
 #include "MainSoftware.hpp"
 
 
-#include <iostream>
 
 int main (int argc, char *argv[])
 {	
-	BMPReader::BitmapReader input_file("TEST_CASE_1.bmp");
-	input_file.openBMP();
+	if (argc != 2)
+	{
+		std::cerr << "Usage: " << argv[0] << " <path_to_bmp_file>" << std::endl;
+		return 1;
+	}
 
-	BMPFormat::Bitmap bitmap_struct;
-	input_file.readAndFillBitmapStruct(bitmap_struct);
+	try
+	{
+		BMPReader::Reader reader_object(argv[1]);
+		reader_object.openBMP();
 
-	input_file.closeBMP();
+		BMPFormat::Bitmap input_bitmap_struct;
 
-	BMPDisplay::BitmapDisplay outputer(bitmap_struct);
-	outputer.displayBMP(bitmap_struct);
+		reader_object.readAndFillBMPStruct(input_bitmap_struct);
+		reader_object.closeBMP();
+
+		BMPDisplay::BitmapDisplayConsole::displayBMP(input_bitmap_struct);
+	}
+	catch( const std::invalid_argument &exception )
+	{
+		std::cerr << exception.what() << "\n";
+	}
 
 	std::cin.get();
 
-	return 0;
+	return 0;\
 }

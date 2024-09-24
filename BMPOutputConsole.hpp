@@ -3,31 +3,33 @@
 
 
 
-#include <iostream>
+#if defined(_WIN32) || defined(_WIN64)
 #include <Windows.h>
+#endif
+
+#include <iostream>
+#include <string>
 #include "BMPFormat.hpp"
-#include "BMPReader.hpp"
 
 
 
 namespace BMPDisplay
 {
-	class BitmapDisplay
+	class BitmapDisplayConsole
 	{
-	public:
-		BitmapDisplay(const BMPFormat::Bitmap &struct_object)
-		{
-			HWND consoleWindow = GetConsoleWindow();
-			if (consoleWindow != NULL)
-			{
-				ShowWindow(consoleWindow, SW_MAXIMIZE);
-			}
-		}
-
-		void displayBMP(const BMPFormat::Bitmap &struct_object) const;
-
-		void display_BMP_Information(const BMPFormat::Bitmap &struct_object) const;
 	private:
+		BitmapDisplayConsole() = delete;
+		BitmapDisplayConsole(const BitmapDisplayConsole&) = delete;
+		BitmapDisplayConsole& operator=(const BitmapDisplayConsole&) = delete;
+	public:
+		static void displayBMP(const BMPFormat::Bitmap &bitmap_struct_object);
+	private:
+		static void display_BMP_Pixel_Data(const BMPFormat::Bitmap &bitmap_struct_object);
+	private:
+		static void display_BMP_Information(const BMPFormat::Bitmap &bitmap_struct_object);
+		static void display_BMP_Information_Type(const BMPFormat::Bitmap &bitmap_struct_object);
+		static void display_BMP_Information_Size(const BMPFormat::Bitmap &bitmap_struct_object);
+		static void display_BMP_Information_Bit_Count(const BMPFormat::Bitmap &bitmap_struct_object);
 	};
 };
 

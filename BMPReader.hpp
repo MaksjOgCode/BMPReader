@@ -7,142 +7,153 @@
 
 
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <fstream>
+#include <stdexcept>
 
 
 
+//------------------------------------------------------------------------------------------------------------------------------------------------------
 namespace BMPReader
 {
-//--------------------------------------------------------------------------------------------------------------
-   class BitmapReader;
+	class HelperRefactorXD;
+	class Reader;
 
-   class H_BRAA
-   {
-   private:
-      friend class BitmapReader;
+	/* ************************************************************ */
+	class H_BRAA
+	{
+	private:
+		friend class HelperRefactorXD;
+	private:
+		friend class Reader;
+		friend class Reader_FILE_Header;
+		friend class Reader_DIB_Header;
+		friend class Reader_Data_Pixel;
 
-      struct Bytes
-      {
-         std::vector <unsigned long> set_of_bytes;
-      };
+		friend class Filler;
+	private:
+		struct Bytes { std::vector <uint8_t> byte_vector {}; };
+	private:
+		static inline void ConvertReadedData (HelperRefactorXD &_helper_refactor_xd );
+		static inline const uint64_t convertToOneByteFromFile(const std::vector <uint8_t> &set_of_bytes);
+	};
+	/* ************************************************************ */
+	class HelperRefactorXD
+	{
+	private:
+		friend class H_BRAA;
+		friend class Reader_FILE_Header;
+		friend class Reader_DIB_Header;
+		friend class Reader_Data_Pixel;
 
-      struct HelperRefactor_xd
-      {
-      public:
-         HelperRefactor_xd (const unsigned int &_sizeof_CURRENT_header)
-            : sizeof_CURRENT_header(_sizeof_CURRENT_header)
-         {
-            bytes_buffer.resize( sizeof_CURRENT_header );
-
-            switch (_sizeof_CURRENT_header)
-            {
-            case H_BITMAPFILEHEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_File_Header::getSizeof_Types_FILE_Header();
-               break;
-
-            case H_BITMAPCOREHEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_CORE_Header::getSizeof_Types_DIB_CORE_Header();
-               break;
-
-            case H_BITMAPINFOHEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_INFO_Header::getSizeof_Types_DIB_INFO_Header();
-               break;
-
-            case H_BITMAPV4HEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_V4_Header::getSizeof_Types_DIB_V4_Header();
-               break;
-
-            case H_BITMAPV5HEADER:
-               this->sizeof_types_CURRENT_header = BMPFormat::Bitmap_V5_Header::getSizeof_Types_DIB_V5_Header();
-               break;
-
-            default:
-               break;
-            }
-         }
-      public:
-         H_BRAA::Bytes set_of_bytes_object                          {};
-         std::vector <H_BRAA::Bytes> set_of_bytes_header            {};
-      public:
-         const unsigned int sizeof_CURRENT_header                 {};
-         std::vector <unsigned int> sizeof_types_CURRENT_header   {};
-      public:
-         std::vector <unsigned char> bytes_buffer                 {};
-      };
-
-   private:
-      /* Full Static class: */
-      H_BRAA () = delete;
-      H_BRAA (const BitmapReaderAlgorithmsAPI&) = delete;
-      H_BRAA &operator=(const BitmapReaderAlgorithmsAPI&) = delete;
-
-   private:
-      static const unsigned long long getResultValueFromFile (const Bytes &set_of_bytes);
-      static const unsigned long long getResultValueFromFile(const std::vector <unsigned char>& bitmapinfo_version_flag);
-
-      static inline void ConvertToBitmapData ( BMPReader::H_BRAA::HelperRefactor_xd& _helper_refactor_xd );
-   };
-//--------------------------------------------------------------------------------------------------------------
-   class BitmapReader
-   {
-   private:
-      friend class BMPReader::H_BRAA;
-
-      /* Only with parametre = const std::string &input_file_name: */
-      BitmapReader() = delete;
-      BitmapReader (const BitmapReaderAlgorithmsAPI&) = delete;
-      BitmapReader &operator=(const BitmapReaderAlgorithmsAPI&) = delete;
-
-   private:
-      std::string    path_to_file {};  /* The field that contains the path to the file */
-      std::ifstream  bmp_file;         /* Input Image .bmp:                            */
-
-      std::vector <BMPReader::H_BRAA::Bytes>  data_from_bmp_file  {};    /* Vector that contains the read data from the file:  */
-   private:
-      std::vector <BMPReader::H_BRAA::Bytes>  pixel_data  {};    /* Vector that contains the read data from the file:  */
-   private:
-      std::vector <BMPReader::H_BRAA::Bytes>  readBMP_FILE_Header();
-      std::vector <BMPReader::H_BRAA::Bytes>  readBMP_DIB_Header();
-
-      std::vector <BMPReader::H_BRAA::Bytes>  readBMPFile();
-   private:
-      std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage(BMPFormat::Bitmap &struct_object);
-
-        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_8bf (BMPFormat::Bitmap &struct_object);
-        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_16bf(BMPFormat::Bitmap &struct_object);
-        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_24bf(BMPFormat::Bitmap &struct_object);
-        std::vector <BMPReader::H_BRAA::Bytes> getPixelDataImage_32bf(BMPFormat::Bitmap &struct_object);
-   private:
-      BMPFormat::Bitmap& fill_FILE_header (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
-
-      BMPFormat::Bitmap& fill_DIB_header        (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
-      BMPFormat::Bitmap& fill_DIB_CORE_header   (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
-      BMPFormat::Bitmap& fill_DIB_INFO_header   (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
-      BMPFormat::Bitmap& fill_DIB_V4_header     (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
-      BMPFormat::Bitmap& fill_DIB_V5_header     (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
-
-      BMPFormat::Bitmap& fillBitmapStruct (BMPFormat::Bitmap &struct_object, const std::vector <BMPReader::H_BRAA::Bytes> &data_from_bmp_file);
-
-
-   public:  
-      BitmapReader(const std::string &input_file_name) : path_to_file(input_file_name) { }  /* Only with parametre = const std::string &input_file_name: */
-      ~BitmapReader() { closeBMP(); }
-
-   public:
-      const bool  openBMP();     /* Open  .bmp File:                                   */
-      const bool  closeBMP();    /* Close .bmp File !DESTRUCTOR CALL THIS METHOD!:     */
-
-      std::vector < std::vector <unsigned long> > GETTER_PIXEL_DATA1 (std::vector <BMPReader::H_BRAA::Bytes> pixel_data);
-
-      std::vector < std::vector <unsigned long> > GETTER_PIXEL_DATA2(std::vector < std::vector <unsigned long> > temp_vector);
-
-   public:
-      BMPFormat::Bitmap& readAndFillBitmapStruct(BMPFormat::Bitmap &struct_object);
-   };
-//--------------------------------------------------------------------------------------------------------------
+	private:
+		/* Only with input param _sizeof_CURRENT_header: */
+		HelperRefactorXD() = delete;
+		HelperRefactorXD(const HelperRefactorXD&) = delete;
+		HelperRefactorXD& operator=(const HelperRefactorXD&) = delete;
+	private:
+		HelperRefactorXD(const uint64_t& _sizeof_CURRENT_header);
+	private:
+		H_BRAA::Bytes bytes                      {};
+		std::vector <H_BRAA::Bytes> set_of_bytes {};
+	private:
+		uint64_t sizeof_CURRENT_header                     {};
+		std::vector <uint8_t> sizeof_types_CURRENT_header  {};
+	private:
+		std::vector <uint8_t> bytes_buffer                 {};
+	};
+	/* ************************************************************ */
+	class Filler
+	{
+	private:
+		friend class Reader;
+	private:
+		Filler() = delete;
+		Filler(const Filler&) = delete;
+		Filler& operator=(const Filler&) = delete;
+	private:
+		static inline void fillBMP_FILE_Header(Reader &reader_object, BMPFormat::Bitmap &bitmap_struct_object);
+		static inline void fillBMP_DIB_CURRENT_Header(Reader &reader_object, BMPFormat::Bitmap &bitmap_struct_object);
+	private:
+		static inline void fillBMP_DIB_CORE_Header(Reader &reader_object, BMPFormat::Bitmap &bitmap_struct_object);
+		static inline void fillBMP_DIB_INFO_Header(Reader &reader_object, BMPFormat::Bitmap &bitmap_struct_object);
+		static inline void fillBMP_DIB_V4_Header(Reader &reader_object, BMPFormat::Bitmap &bitmap_struct_object);
+		static inline void fillBMP_DIB_V5_Header(Reader &reader_object, BMPFormat::Bitmap &bitmap_struct_object);
+	private:
+		static inline void fillBMP_PIXEL_DATA(Reader &reader_object, BMPFormat::Bitmap &bitmap_struct_object);
+	};
+	/* ************************************************************ */
+	class Reader
+	{
+	private:
+		friend class Reader_FILE_Header;
+		friend class Reader_DIB_Header;
+		friend class Reader_Data_Pixel;
+		friend class Filler;
+	public:
+		Reader  (const std::string &_input_path_to_file);
+		~Reader () { closeBMP(); }
+	public:
+      const bool openBMP();
+		const bool closeBMP();
+	private:
+		/* Only with parametre = const std::string &input_path_to_file: */
+		Reader () = delete;
+		Reader (const Reader&) = delete;
+		Reader &operator=(const Reader&) = delete;
+	private:
+		std::string    input_path_to_file {};
+		std::ifstream  input_bmp_file;
+	private:
+		std::vector <H_BRAA::Bytes> readed_FILE_DIB_headers {};
+		std::vector <H_BRAA::Bytes> readed_PIXEL_DATA       {};
+	public:
+		void readAndFillBMPStruct(BMPFormat::Bitmap &bitmap_struct_object);
+	};
+	/* ************************************************************ */
+	/* A fully static class: */
+	class Reader_FILE_Header
+	{
+	private:
+		friend class Reader;
+	private:
+		Reader_FILE_Header() = delete;
+		Reader_FILE_Header(const Reader_FILE_Header&) = delete;
+		Reader_FILE_Header& operator=(const Reader_FILE_Header&) = delete;
+	private:
+		static inline std::vector <H_BRAA::Bytes> readBMP_FILE_Header(Reader &reader_object);
+	};
+	/* ************************************************************ */
+	/* A fully static class: */
+	class Reader_DIB_Header
+	{
+	private:
+		friend class Reader;
+	private:
+		Reader_DIB_Header() = delete;
+		Reader_DIB_Header(const Reader_DIB_Header&) = delete;
+		Reader_DIB_Header& operator=(const Reader_DIB_Header&) = delete;
+	private:
+		static inline std::vector <H_BRAA::Bytes> readBMP_DIB_Header(Reader &reader_object);
+	private:
+		static inline std::vector <H_BRAA::Bytes> readBMP_DIB_CURRENT_Header (Reader &reader_object, const uint8_t  &flag_version_dib);
+	};
+	/* ************************************************************ */
+	class Reader_Data_Pixel
+	{
+	private:
+		friend class Reader;
+	private:
+		Reader_Data_Pixel() = delete;
+		Reader_Data_Pixel(const Reader_Data_Pixel&) = delete;
+		Reader_Data_Pixel& operator=(const Reader_Data_Pixel&) = delete;
+	private:
+		static inline std::vector <BMPReader::H_BRAA::Bytes> readBMP_PIXEL_DATA (Reader &reader_object, std::vector <BMPReader::H_BRAA::Bytes> &readed_DIB_Header);
+	};
 };
+//------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
